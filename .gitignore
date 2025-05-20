@@ -16,3 +16,5 @@ venv.bak/
 .idea/
 *.sublime-workspace
 *.sublime-project
+
+*.ARW

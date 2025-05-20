@@ -35,6 +35,24 @@ def show_combined_image(main_window):
     """
     if any(img is None for img in main_window.processed):
         return
+
+    # If not in crop mode and a crop rectangle is set, crop the processed images on-the-fly
+    crop_rect = getattr(main_window.viewer, '_saved_crop_rect', None)
+    if not main_window.crop_mode and crop_rect is not None:
+        cropped_channels = []
+        for img in main_window.processed:
+            if img is not None:
+                cropped = img[crop_rect.top():crop_rect.bottom()+1, crop_rect.left():crop_rect.right()+1]
+                cropped_channels.append(cropped)
+            else:
+                cropped_channels.append(None)
+        intensities = [ctrl.slider_intensity.value() for ctrl in main_window.controllers]
+        combined = combine_channels(cropped_channels, intensities)
+        q_img = convert_to_qimage(combined)
+        main_window.viewer.set_image(QPixmap.fromImage(q_img))
+        return
+
+    # Otherwise use full images
     intensities = [ctrl.slider_intensity.value() for ctrl in main_window.controllers]
     combined = combine_channels(main_window.processed, intensities)
     q_img = convert_to_qimage(combined)
@@ -52,6 +70,11 @@ def show_single_channel_image(main_window):
     """
     img = main_window.processed[main_window.current_channel]
     if img is not None:
+        # If not in crop mode and a crop rectangle is set, crop the processed image on-the-fly
+        crop_rect = getattr(main_window.viewer, '_saved_crop_rect', None)
+        if not main_window.crop_mode and crop_rect is not None:
+            cropped = img[crop_rect.top():crop_rect.bottom()+1, crop_rect.left():crop_rect.right()+1]
+            img = cropped
         rgb_img = np.stack([img]*3, axis=-1)
         q_img = convert_to_qimage(rgb_img)
         main_window.viewer.set_image(QPixmap.fromImage(q_img))

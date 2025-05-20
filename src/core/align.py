@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 
+class AlignmentError(Exception):
+    pass
+
 def align_images(original_images):
     """
     Aligns green and blue channels to the red channel using ORB feature matching
