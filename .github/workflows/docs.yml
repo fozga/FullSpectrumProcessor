@@ -1,0 +1,49 @@
+name: Build and Deploy Documentation
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install pdoc
+        run: pip install pdoc
+
+      - name: Build documentation
+        run: |
+          mkdir -p docs
+          pdoc --html --output-dir docs FullSpectrumProcessor
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          commit_message: "Update documentation"
+      - name: Clean up
+        run: |
+          rm -rf docs/*.html
+          rm -rf docs/*.css
+          rm -rf docs/*.js
+          rm -rf docs/*.png
+          rm -rf docs/*.svg
+          echo "Documentation cleaned up"
+        if: always()
+      - name: Notify on success
+        if: success()
+        run: echo "Documentation built and deployed successfully!"
+      - name: Notify on failure
+        if: failure()
+        run: echo "Documentation build or deployment failed. Please check the logs."
+

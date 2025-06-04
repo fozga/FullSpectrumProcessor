@@ -1,0 +1,21 @@
+name: Type Checking
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches: [main]
+
+jobs:
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install mypy and dependencies
+        run: pip install mypy
+      - name: Run type checking
+        run: mypy src/

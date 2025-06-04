@@ -1,0 +1,6 @@
+[MASTER]
+ignore = tests, docs, env
+load-plugins = pylint.extensions.bad_builtin
+
+[FORMAT]
+max-line-length = 120

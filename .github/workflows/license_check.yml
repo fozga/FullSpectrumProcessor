@@ -1,0 +1,21 @@
+name: License and Open Source Compliance Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  license-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install pip-licenses
+        run: pip install pip-licenses
+      - name: Check licenses
+        run: pip-licenses --from=mixed --fail-on=restricted

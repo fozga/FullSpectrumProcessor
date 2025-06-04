@@ -1,0 +1,21 @@
+name: Static Code Analysis
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches: [main]
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install pylint
+        run: pip install pylint
+      - name: Run static code analysis
+        run: pylint src/

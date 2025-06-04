@@ -1,0 +1,23 @@
+name: Formatting Check
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches: [main]
+
+jobs:
+  formatting-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install formatting tools
+        run: pip install black isort
+      - name: Check formatting with Black
+        run: black --check src/
+      - name: Check import order with isort
+        run: isort --check-only src/
