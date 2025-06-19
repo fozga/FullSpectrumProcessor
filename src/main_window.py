@@ -177,8 +177,11 @@ class MainWindow(QMainWindow):  # pylint: disable=too-many-instance-attributes
         for idx, controller in enumerate(self.controllers):
             # Connect load button and sliders to handlers
             controller.btn_load.clicked.connect(lambda _, i=idx: load_channel(self, i))
-            controller.sliders["brightness"].valueChanged.connect(lambda _, i=idx: adjust_channel(self, i))
-            controller.sliders["contrast"].valueChanged.connect(lambda _, i=idx: adjust_channel(self, i))
+
+            # Connect controller value changes to adjust channel (handles both slider and text input)
+            controller.value_changed.connect(lambda i=idx: adjust_channel(self, i))
+
+            # Connect intensity directly to display update
             controller.sliders["intensity"].valueChanged.connect(lambda _: update_main_display(self))
 
             # Fix the mousePressEvent assignment with properly typed functions
